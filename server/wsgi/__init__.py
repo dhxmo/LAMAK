@@ -72,7 +72,7 @@ def error_handler(e):
 
 if __name__ == "__main__":
     try:
-        app.run(host="0.0.0.0", port=int(os.environ["PORT"]))
+        # app.run(host="0.0.0.0", port=int(os.environ["PORT"]))
         socketio.run(
             app,
             host="0.0.0.0",
