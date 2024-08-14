@@ -31,5 +31,5 @@ conda activate ro
 
 pip install -r requirements.txt
 
-python main.py
+gunicorn -c gc_config.py main:app
 ````

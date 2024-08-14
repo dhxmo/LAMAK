@@ -38,16 +38,11 @@ class MRG:
         # Lesion Segmented (mimic_cxr) --> where is the disease
         img1, img2 = get_cxr_img(img_path, self.img_cfg)
         text_report = self.reporter.report(img1)[0]
-        print(" text_report", text_report)
 
         # Disease Classifier (jfchexpert) -> prob of what disease
         prob = cxr_infer(self.img_model, img2, self.img_cfg)
         converter = Prob2text(prob, self.five_diseases)
         res = converter.get_disease_probs_from_dict()
-
-        print("chexpert inference prob", prob)
-        print("converter", converter)
-        print("res", res)
 
         final_report = text_report + "\n" + res
         print("prompt_report", final_report)

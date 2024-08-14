@@ -25,4 +25,4 @@ def send_brain_image(data):
 
     # Decode the Base64 encoded video data
     shared_state["mrg_ready"] = True
-    shared_state["report"] = data["mrg_result"]
+    shared_state["report"] = data['mrg_result']

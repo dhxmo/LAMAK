@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 
 import torch
@@ -35,8 +36,6 @@ def connected():
 # @app.route("/mrg", methods=["POST"])
 @socketio.on("mrg")
 def mrg(data):
-    print("data", data)
-
     # Decode the base64 string
     decoded_data = base64.b64decode(data["encoded_img"])
 
@@ -50,9 +49,10 @@ def mrg(data):
 
     # pass to mrg pipeline
     report_result = init_MRG.get_report(img_file_path)
-    report_file_path = f"{assets_dir}/{data['unique_uuid']}.txt"
-    with open(report_file_path, "wb") as f:
-        f.write(report_result)
+    report_result = str(report_result)
+    # report_file_path = f"{assets_dir}/{data['unique_uuid']}.txt"
+    # with open(report_file_path, "wb") as f:
+    #     f.write(report_result)
 
     # send response back
     emit("mrg_result", {"mrg_result": report_result})
