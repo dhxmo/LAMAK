@@ -1,12 +1,17 @@
 import base64
 import json
 import os
+import threading
+import time
 import uuid
 
 from tkinter import *
 import pyautogui
 import requests
 from dotenv import load_dotenv
+
+from gui.utils import shared_state
+from gui.ws_client import sio
 
 load_dotenv()
 
@@ -53,6 +58,17 @@ class Application:
         self.assets_dir = f"{self.CURR_DIR}/assets"
         os.makedirs(self.assets_dir, exist_ok=True)
 
+        self.stop_thread_flag = False
+        self.poll_thread = threading.Thread(target=self.poll_mrg_readiness)
+        self.poll_thread.start()
+
+    def poll_mrg_readiness(self):
+        while not self.stop_thread_flag:
+            time.sleep(1)  # Poll every second
+            if shared_state["mrg_ready"]:
+                self.text_area.insert(END, shared_state["report"])
+                break
+
     def create_screen_canvas(self):
         self.master_screen.deiconify()
         self.master.withdraw()
@@ -83,19 +99,22 @@ class Application:
             # Encode the audio data in base64
             encoded_img = base64.b64encode(audio_data).decode("utf-8")
 
-            headers = {"Content-Type": "application/json"}
             data = {
                 "unique_uuid": random_uuid,
                 "encoded_img": encoded_img
             }
-            data = json.dumps(data)
 
-            res = requests.post(url=os.environ["SERVER_IP"], data=data, headers=headers)
-            res = json.loads(res.text)
-            report = res["mrg_result"]
+            # headers = {"Content-Type": "application/json"}
+            # data = json.dumps(data)
+            #
+            # res = requests.post(url=os.environ["SERVER_IP"], data=data, headers=headers)
+            # res = json.loads(res.text)
+            # report = res["mrg_result"]
+
+            sio.emit("mrg", data)
 
             # paste response to box
-            self.text_area.insert(END, report)
+            # self.text_area.insert(END, report)
 
     def on_button_release(self, event):
         if self.start_x <= self.current_x and self.start_y <= self.current_y:
