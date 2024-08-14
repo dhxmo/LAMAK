@@ -22,7 +22,7 @@ class Application:
         self.current_y = None
 
         master.geometry("400x600")  # set new geometry
-        master.title("LAMAK")
+        master.title("Röntgen")
 
         self.menu_frame = Frame(master)
         self.menu_frame.pack(fill=BOTH, expand=YES, padx=1, pady=1)
